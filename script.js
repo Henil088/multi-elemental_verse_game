@@ -439,9 +439,9 @@ let levels = {
             new BRICK(1200, canvas.height - 35, 50, 600, "brick2.png"),
 
             
-            new BRICK(0, canvas.height - 220, 50, 600, "brick2.png"),
-            new BRICK(500, canvas.height - 220, 50, 600, "brick2.png"),
-            new BRICK(1200, canvas.height - 220, 50, 600, "brick2.png"),
+            new BRICK(0, canvas.height - 230, 50, 600, "brick2.png"),
+            new BRICK(500, canvas.height - 230, 50, 600, "brick2.png"),
+            new BRICK(1200, canvas.height - 230, 50, 600, "brick2.png"),
 
             new BRICK(0, canvas.height - 450, 50, 600, "brick2.png"),
             new BRICK(800, canvas.height - 450, 50, 600, "brick2.png"),
@@ -450,6 +450,17 @@ let levels = {
            
             new BRICK(500, canvas.height - 650, 50, 700, "brick2.png"),
             new BRICK(1200, canvas.height - 650, 50, 600, "brick2.png"),
+
+            new BRICK(1450, canvas.height - 420, 395, 150, "curv.png"),
+            new BRICK(00, canvas.height - 790, 350, 150, "curvL.png"),
+
+            new BRICK(-10, canvas.height - 250, 40, 50, "brick.png"),
+            new BRICK(-10, canvas.height - 290, 40, 50, "brick.png"),
+            new BRICK(00, canvas.height - 330, 40, 50, "brick.png"),
+            new BRICK(00, canvas.height - 360, 40, 50, "curv2.png"),
+            
+
+
     
     //       new BRICK(00, 490, 50, 300, "brick2.png"),
       //    new BRICK(canvas.width-100, 650, 50, 200, "brick2.png"),
@@ -469,25 +480,25 @@ let levels = {
             new BRICK(200, canvas.height - 50, 50, 500, "brick2.png"),*/
         ],
         
-        obstacles: [
+       obstacles: [
             new Obstacle(550, canvas.height - 35, 20, 100,'fire', "fire_image.png"),
             new Obstacle(850, canvas.height - 35, 20, 100, 'water',"water_image.png"),
-            new Obstacle(1300, canvas.height - 220, 20, 120,'fire', "fire_image.png"),
-            new Obstacle(550, canvas.height - 220, 20, 100, 'water',"water_image.png"),
-            new Obstacle(750, canvas.height - 220, 20, 100,'fire', "fire_image.png"),
+            new Obstacle(1300, canvas.height - 230, 20, 120,'fire', "fire_image.png"),
+            new Obstacle(550, canvas.height - 230, 20, 100, 'water',"water_image.png"),
+            new Obstacle(750, canvas.height - 230, 20, 100,'fire', "fire_image.png"),
 
             new Obstacle(1050, canvas.height - 450, 20, 80, 'both',"both.png"),
             new Obstacle(1200, canvas.height - 450, 20, 80,'both', "both.png"),
             
-            new Obstacle(890, canvas.height - 650, 20, 80,'fire', "fire_image.png"),
-            new Obstacle(1050, canvas.height - 650, 20, 80, 'water',"water_image.png"),
-            new Obstacle(1200, canvas.height - 650, 20, 80,'fire', "fire_image.png"),
-            new Obstacle(750, canvas.height - 650, 20, 80, 'water',"water_image.png"),
+          //  new Obstacle(890, canvas.height - 650, 20, 80,'fire', "fire_image.png"),
+           // new Obstacle(1050, canvas.height - 650, 20, 80, 'water',"water_image.png"),
+            //new Obstacle(1200, canvas.height - 650, 20, 80,'fire', "fire_image.png"),
+            //new Obstacle(750, canvas.height - 650, 20, 80, 'water',"water_image.png"),
 
             
-            new Obstacle(450, canvas.height - 450, 20, 100,'both', "both.png"),
+            //new Obstacle(450, canvas.height - 450, 20, 100,'both', "both.png"),
             
-            new Obstacle(150, canvas.height - 220, 20, 100,'both', "both.png"),
+           // new Obstacle(150, canvas.height - 220, 20, 100,'both', "both.png"),
         ],
         
         collectors: [
@@ -497,9 +508,9 @@ let levels = {
             new Collector(1350, 200, 30, 30,'star', "star.png"),
         ],
 
-        gate: new Door(1400, canvas.height-700, 50, 50, "door_image.png"),
+        gate: new Door(1520, canvas.height-760, 130, 100, "door_image.png"),
 
-        button_gate: new Gate_Button(900, 140, 20, 150, 30, canvas.height - 250, 'door_image.png', 'both.png'),
+        button_gate: new Gate_Button(900, 140, 20, 150, 30, canvas.height - 250, 'door.png', 'both.png'),
 
         min_stars: 2,
 
@@ -540,7 +551,7 @@ let levels = {
 
         gate: new Door(800, canvas.height-50, 50, 50, "door_image.png"),
         
-        button_gate: new Gate_Button(900, 140, 20, 150, 30, canvas.height - 250, 'door_image.png', 'both.png'),
+        button_gate: new Gate_Button(900, 140, 20, 150, 30, canvas.height - 250, 'door.png', 'both.png'),
         
         min_stars: 2,
 
