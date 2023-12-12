@@ -69,21 +69,24 @@ class Character{
         this.img.src = img;
 
         this.velocityY = 10;
-        this.run_speed = 10;
+        this.run_speed = 15;
         this.onGround = false;
 
         this.Lifes = 3;
         this.lifeX = lifeX;
         this.lifeY = lifeY;
+
+        this.starCount = 0;
     }
 
     draw(){
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
-    update(bricks, collectors){
+    update(bricks, collectors, gate_button){
         if(!(this.Lifes > 0)){
             return;
         }
+        
         // ctx.fillStyle = "white";
         ctx.font = "30px Arial";
         ctx.textAlign = "center";
@@ -95,7 +98,7 @@ class Character{
             ctx.stroke();
             ctx.fill();
         }
-        else{
+        if(this.type == 'water'){
             ctx.fillStyle = "darkblue";
             ctx.beginPath();
             ctx.arc(this.lifeX, this.lifeY, 30, Math.PI*2, 0);
@@ -104,7 +107,7 @@ class Character{
         }
         ctx.fillStyle = "white";
         ctx.fillText(this.Lifes, this.lifeX, this.lifeY+5);
-            
+        
 
         if(this.y+this.height > canvas.height){
 
@@ -157,6 +160,35 @@ class Character{
 
         }
 
+        if(!gate_button.isOpened){
+            if(this.x+this.width >= gate_button.x && // right
+                    this.x <= gate_button.x+gate_button.width && //left
+                    this.y+this.height >= gate_button.y && //top
+                    this.y <= gate_button.y+gate_button.height // bottom
+                    ){
+                    if(this.y <= gate_button.y-2){
+                        this.onGround = true;
+                        this.y = gate_button.y-this.height - 2;
+                    }
+    
+                    if(this.y > gate_button.y){
+                        this.velocityY = 3;
+                    }
+    
+                    if(this.y > gate_button.y && this.x+this.width >= gate_button.x && this.x+this.width <= gate_button.x+10){
+                        // this.run_speed = 0;
+                        this.x = gate_button.x-this.width-5;
+                    }
+    
+                    if(this.y > gate_button.y && this.x <= gate_button.x+gate_button.width && this.x >= gate_button.x+gate_button.width -10){
+                        // this.run_speed = 0;
+                        this.x = gate_button.x+gate_button.width+5;
+                    }
+                    
+                    // this.velocityY = 0;
+                }
+        }
+
 
 
         if(!this.onGround){
@@ -179,6 +211,11 @@ class Character{
                     ){
                         if(this.type == collect.type){
                             this.Lifes++;
+                            collectors.splice(i,1);
+                        }
+
+                        if(collect.type == 'star'){
+                            this.starCount++;
                             collectors.splice(i,1);
                         }
                     }
@@ -295,27 +332,78 @@ class Door{
     }
 
     characters_collide(char_fire, char_water){
-        if((char_fire.x+char_fire.width >= this.x && // right
-                char_fire.x <= this.x+this.width && //left
-                char_fire.y+char_fire.height >= this.y && //top
-                char_fire.y <= this.y+this.height // bottom 
-            ) && 
-            (char_water.x+char_water.width >= this.x && // right
-            char_water.x <= this.x+this.width && //left
-            char_water.y+char_water.height >= this.y && //top
-            char_water.y <= this.y+this.height // bottom 
-        )){
-            this.x = -500;
-            this.y = -500;
-            level++;
-            fire_chatacter.x = levels[level].character_initial_pos.x;
-            fire_chatacter.y = levels[level].character_initial_pos.y;
-            
-            water_chatacter.x = levels[level].character_initial_pos.x;
-            water_chatacter.y = levels[level].character_initial_pos.y;
-            // alert(level);
+        if(char_fire.starCount+char_water.starCount >= levels[level].min_stars){
+
+            if((char_fire.x+char_fire.width >= this.x && // right
+                    char_fire.x <= this.x+this.width && //left
+                    char_fire.y+char_fire.height >= this.y && //top
+                    char_fire.y <= this.y+this.height // bottom 
+                ) && 
+                (char_water.x+char_water.width >= this.x && // right
+                char_water.x <= this.x+this.width && //left
+                char_water.y+char_water.height >= this.y && //top
+                char_water.y <= this.y+this.height // bottom 
+            )){
+                this.x = -500;
+                this.y = -500;
+                level++;
+                fire_chatacter.x = levels[level].character_initial_pos.x;
+                fire_chatacter.y = levels[level].character_initial_pos.y;
+                
+                water_chatacter.x = levels[level].character_initial_pos.x;
+                water_chatacter.y = levels[level].character_initial_pos.y;
+                // alert(level);
+            }
         }
     }
+}
+
+class Gate_Button{
+    constructor(x, y, width, height, Bx, By, Gate_img, Button_img, isOpened=false) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.isOpened = isOpened;
+
+        this.Bx = Bx;
+        this.By = By;
+
+        this.Gate_img = new Image();
+        this.Gate_img.src = Gate_img;
+
+        this.Button_img = new Image();
+        this.Button_img.src = Button_img;
+    }
+    draw(){
+        if(!this.isOpened){
+            ctx.drawImage(this.Gate_img, this.x, this.y, this.width, this.height);   
+        }
+
+        ctx.drawImage(this.Button_img, this.Bx, this.By, 40, 40);
+    }
+
+    update(character1, character2){
+
+                if((character1.x+character1.width >= this.Bx && // right
+                    character1.x <= this.Bx+40 && //left
+                    character1.y+character1.height >= this.By && //top
+                    character1.y <= this.By+40) // bottom
+                    ||
+                    (character2.x+character2.width >= this.Bx && // right
+                    character2.x <= this.Bx+40 && //left
+                    character2.y+character2.height >= this.By && //top
+                    character2.y <= this.By+40 // bottom
+                )
+                ){
+                    this.isOpened = true;
+                } else{
+                    this.isOpened = false;
+                }
+
+
+        }
+    
 }
 
 const fire_chatacter = new Character(2, canvas.height-60, 30, 30, 'fire', 'fire_char.png', 30, 50)
@@ -327,9 +415,6 @@ const water_chatacter = new Character(2, canvas.height-60, 30, 30, 'water', 'wat
 let img = new Image();
 
 img.src = "Project.png";
-
-
-
 
 
 
@@ -345,25 +430,25 @@ let levels = {
             //new BRICK(500, canvas.height - 100, 50, 500, "brick2.png"),
         
            //BORDER
-            new BRICK(00, canvas.height - 795, 50, 600, "brick2.png"),
+            new BRICK(0, canvas.height - 795, 50, 600, "brick2.png"),
             new BRICK(600, canvas.height - 795, 50, 600, "brick2.png"),
             new BRICK(1200, canvas.height - 795, 50, 600, "brick2.png"),
 
-            new BRICK(00, canvas.height - 35, 50, 600, "brick2.png"),
+            new BRICK(0, canvas.height - 35, 50, 600, "brick2.png"),
             new BRICK(600, canvas.height - 35, 50, 600, "brick2.png"),
             new BRICK(1200, canvas.height - 35, 50, 600, "brick2.png"),
 
             
-            new BRICK(00, canvas.height - 220, 50, 600, "brick2.png"),
+            new BRICK(0, canvas.height - 220, 50, 600, "brick2.png"),
             new BRICK(500, canvas.height - 220, 50, 600, "brick2.png"),
             new BRICK(1200, canvas.height - 220, 50, 600, "brick2.png"),
 
-            new BRICK(00, canvas.height - 450, 50, 600, "brick2.png"),
+            new BRICK(0, canvas.height - 450, 50, 600, "brick2.png"),
             new BRICK(800, canvas.height - 450, 50, 600, "brick2.png"),
             new BRICK(1200, canvas.height - 450, 50, 600, "brick2.png"),
 
            
-            new BRICK(500, canvas.height - 650, 50, 600, "brick2.png"),
+            new BRICK(500, canvas.height - 650, 50, 700, "brick2.png"),
             new BRICK(1200, canvas.height - 650, 50, 600, "brick2.png"),
     
     //       new BRICK(00, 490, 50, 300, "brick2.png"),
@@ -385,18 +470,38 @@ let levels = {
         ],
         
         obstacles: [
-            new Obstacle(30, 600-2, 20, 50, 'water',"water_image.png"),
-            new Obstacle(canvas.width-100+5, 650, 10, 50, 'water',"water_image.png"),
-            new Obstacle(300+30, 500-2, 25, 50,'fire', "fire_image.png"),
-            new Obstacle(700+40, 550-2, 10, 80,'fire', "fire_image.png"),
+            new Obstacle(550, canvas.height - 35, 20, 100,'fire', "fire_image.png"),
+            new Obstacle(850, canvas.height - 35, 20, 100, 'water',"water_image.png"),
+            new Obstacle(1300, canvas.height - 220, 20, 120,'fire', "fire_image.png"),
+            new Obstacle(550, canvas.height - 220, 20, 100, 'water',"water_image.png"),
+            new Obstacle(750, canvas.height - 220, 20, 100,'fire', "fire_image.png"),
+
+            new Obstacle(1050, canvas.height - 450, 20, 80, 'both',"both.png"),
+            new Obstacle(1200, canvas.height - 450, 20, 80,'both', "both.png"),
+            
+            new Obstacle(890, canvas.height - 650, 20, 80,'fire', "fire_image.png"),
+            new Obstacle(1050, canvas.height - 650, 20, 80, 'water',"water_image.png"),
+            new Obstacle(1200, canvas.height - 650, 20, 80,'fire', "fire_image.png"),
+            new Obstacle(750, canvas.height - 650, 20, 80, 'water',"water_image.png"),
+
+            
+            new Obstacle(450, canvas.height - 450, 20, 100,'both', "both.png"),
+            
+            new Obstacle(150, canvas.height - 220, 20, 100,'both', "both.png"),
         ],
         
         collectors: [
             new Collector(400+30, 500-40, 30, 30,'water', "water_point.png"),
             new Collector(700+40, 550-40, 30, 30,'fire', "fire_point.png"),
+            new Collector(200, 200, 30, 30,'star', "star.png"),
+            new Collector(1350, 200, 30, 30,'star', "star.png"),
         ],
 
-        gate: new Door(700, canvas.height-50, 50, 50, "door_image.png"),
+        gate: new Door(1400, canvas.height-700, 50, 50, "door_image.png"),
+
+        button_gate: new Gate_Button(900, 140, 20, 150, 30, canvas.height - 250, 'door_image.png', 'both.png'),
+
+        min_stars: 2,
 
         character_initial_pos: {
             x: 0,
@@ -434,6 +539,10 @@ let levels = {
         ],
 
         gate: new Door(800, canvas.height-50, 50, 50, "door_image.png"),
+        
+        button_gate: new Gate_Button(900, 140, 20, 150, 30, canvas.height - 250, 'door_image.png', 'both.png'),
+        
+        min_stars: 2,
 
         character_initial_pos: {
             x: 0,
@@ -545,12 +654,22 @@ function gameLoop(){
         collect.draw();
     }
 
-    fire_chatacter.update(levels[level].bricks, levels[level].collectors);
-    water_chatacter.update(levels[level].bricks, levels[level].collectors);
+    fire_chatacter.update(levels[level].bricks, levels[level].collectors, levels[level].button_gate);
+    water_chatacter.update(levels[level].bricks, levels[level].collectors, levels[level].button_gate);
+
+    levels[level].button_gate.draw();
+    
+    levels[level].button_gate.update(fire_chatacter, water_chatacter);
 
 
     
     levels[level].gate.characters_collide(fire_chatacter, water_chatacter);
+
+    
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "yellow";
+    ctx.fillText(fire_chatacter.starCount + water_chatacter.starCount, 70, 120);
 
     if(key['ArrowUp']){
         fire_chatacter.jump();
